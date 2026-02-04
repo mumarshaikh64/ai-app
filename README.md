@@ -20,4 +20,11 @@ flutter pub get
 flutter run
 ```
 
-Update the server URL in `client/lib/main.dart` if you are running on a device/emulator.
+### Web preview
+```bash
+cd client
+flutter pub get
+flutter run -d chrome
+```
+
+Use the **Server URL** field in the lobby to point at your server (e.g. `http://localhost:3000` on the same machine, or your LAN IP for devices).

@@ -30,10 +30,12 @@ class LobbyScreen extends StatefulWidget {
 
 class _LobbyScreenState extends State<LobbyScreen> {
   final nameController = TextEditingController();
+  final serverController = TextEditingController(text: 'http://localhost:3000');
 
   @override
   void dispose() {
     nameController.dispose();
+    serverController.dispose();
     super.dispose();
   }
 
@@ -54,12 +56,24 @@ class _LobbyScreenState extends State<LobbyScreen> {
                 ),
               ),
               const SizedBox(height: 16),
+              TextField(
+                controller: serverController,
+                decoration: const InputDecoration(
+                  labelText: 'Server URL',
+                  helperText: 'Use your LAN IP when testing on a device or web.',
+                ),
+              ),
+              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
                   final name = nameController.text.trim();
+                  final serverUrl = serverController.text.trim();
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => GameScreen(playerName: name.isEmpty ? 'Player' : name),
+                      builder: (_) => GameScreen(
+                        playerName: name.isEmpty ? 'Player' : name,
+                        serverUrl: serverUrl.isEmpty ? 'http://localhost:3000' : serverUrl,
+                      ),
                     ),
                   );
                 },
@@ -74,9 +88,10 @@ class _LobbyScreenState extends State<LobbyScreen> {
 }
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key, required this.playerName});
+  const GameScreen({super.key, required this.playerName, required this.serverUrl});
 
   final String playerName;
+  final String serverUrl;
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -94,7 +109,7 @@ class _GameScreenState extends State<GameScreen> {
   void initState() {
     super.initState();
     socket = io.io(
-      'http://localhost:3000',
+      widget.serverUrl,
       io.OptionBuilder().setTransports(['websocket']).build(),
     );
 
